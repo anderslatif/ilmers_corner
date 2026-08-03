@@ -1,0 +1,70 @@
+name: publish
+
+# Publishes to PyPI when a GitHub release is published.
+#
+# Authentication uses a PyPI Trusted Publisher (OIDC), so no API token is
+# stored in this repository. Configure it at:
+#   https://pypi.org/manage/project/ilmers_corner/settings/publishing/
+# with workflow filename `publish.yml` and environment `pypi`.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Pinned with this tool. See the README for why the SHA, not the tag.
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0  2026-07-16
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Run tests before publishing
+        run: |
+          uv venv
+          uv pip install -e . pytest
+          uv run pytest tests/ -q
+
+      - name: Build
+        run: uv build
+
+      - name: Verify the version matches the release tag
+        if: github.event_name == 'release'
+        run: |
+          release_tag="${GITHUB_REF_NAME#v}"
+          built_version="$(uv run python -c 'import ilmers_corner; print(ilmers_corner.__version__)')"
+          if [ "$release_tag" != "$built_version" ]; then
+            echo "Release tag ($release_tag) does not match package version ($built_version)." >&2
+            exit 1
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2  2025-04-03
+        with:
+          name: distributions
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/ilmers_corner
+    permissions:
+      # Required for Trusted Publishing; this is what mints the OIDC token.
+      id-token: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0  2025-04-08
+        with:
+          name: distributions
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc  # v1.12.4  2025-03-10
