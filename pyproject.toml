@@ -1,0 +1,32 @@
+[project]
+name = "ilmers_corner"
+version = "0.1.0"
+description = "Browse GitHub Action versions and generate hash-pinned `uses:` lines."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Anders Latif", email = "anderslatif@gmail.com" }]
+requires-python = ">=3.9"
+keywords = ["github-actions", "cli", "security", "supply-chain", "pinning"]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Build Tools",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/anderslatif/ilmers_corner"
+Issues = "https://github.com/anderslatif/ilmers_corner/issues"
+
+[project.scripts]
+ilmers_corner = "ilmers_corner.cli:main"
+ilmers-corner = "ilmers_corner.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ilmers_corner"]

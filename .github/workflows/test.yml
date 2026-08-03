@@ -1,0 +1,32 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.13"]
+    steps:
+      # Pinned with this tool. See the README for why the SHA, not the tag.
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0  2026-07-16
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Run tests
+        run: |
+          uv venv --python ${{ matrix.python-version }}
+          uv pip install -e . pytest
+          uv run pytest tests/ -q
+
+      - name: Check the CLI starts
+        run: uv run ilmers_corner --version
