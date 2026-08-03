@@ -1,12 +1,5 @@
 name: publish
 
-# Publishes to PyPI when a GitHub release is published.
-#
-# Authentication uses a PyPI Trusted Publisher (OIDC), so no API token is
-# stored in this repository. Configure it at:
-#   https://pypi.org/manage/project/ilmers_corner/settings/publishing/
-# with workflow filename `publish.yml` and environment `pypi`.
-
 on:
   release:
     types: [published]
