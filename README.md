@@ -1,6 +1,6 @@
 # ilmers_corner
 
-[![](https://img.shields.io/pypi/v/actions_search.svg)](https://pypi.org/pypi/actions_search/)
+[![](https://img.shields.io/pypi/v/ilmers_corner.svg)](https://pypi.org/project/ilmers_corner/)
 
 
 A CLI for browsing and generating hashpins for GitHub Actions.
