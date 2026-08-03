@@ -1,6 +1,6 @@
 [project]
 name = "ilmers_corner"
-version = "0.1.0"
+version = "0.1.1"
 description = "Browse GitHub Action versions and generate hash-pinned `uses:` lines."
 readme = "README.md"
 license = { file = "LICENSE" }
